@@ -60,13 +60,6 @@
             <version>4.0.2</version>
         </dependency>
 
-        <!-- Maven Jar Plugin to package application -->
-        <dependency>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>3.4.2</version>
-        </dependency>
-
         <!-- Maven shade plugin for fat jar-->
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
@@ -79,7 +72,16 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.13.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>12.0.15</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.ee10.websocket</groupId>
+            <artifactId>jetty-ee10-websocket-jakarta-server</artifactId>
+            <version>12.0.15</version>
+        </dependency>
 
     </dependencies>
 

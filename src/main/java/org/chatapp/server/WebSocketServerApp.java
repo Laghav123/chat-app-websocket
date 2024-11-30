@@ -1,11 +1,7 @@
 package org.chatapp.server;
-import jakarta.websocket.server.ServerContainer;
-import org.glassfish.grizzly.http.server.HttpHandler;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.grizzly.http.server.StaticHttpHandler;
-import org.glassfish.tyrus.container.grizzly.server.GrizzlyServerContainer;
-import org.glassfish.tyrus.server.Server;
-
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
+import org.eclipse.jetty.server.Server;
 
 
 public class WebSocketServerApp {
@@ -13,51 +9,27 @@ public class WebSocketServerApp {
 
 
         try {
-            int port = Integer.parseInt(System.getenv("PORT")); // Fetch Heroku-assigned port
-
-            HttpServer httpServer = HttpServer.createSimpleServer(null, port);
-//            HttpHandler staticHandler = new StaticHttpHandler("./react-build");
-            httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler() {
-                @Override
-                public void service(org.glassfish.grizzly.http.server.Request request,
-                                    org.glassfish.grizzly.http.server.Response response) throws Exception {
-                    response.setContentType("text/plain");
-                    response.getWriter().write("This is a web socket server");
-                }
-            }, "/");
-            httpServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler() {
-                @Override
-                public void service(org.glassfish.grizzly.http.server.Request request,
-                                    org.glassfish.grizzly.http.server.Response response) throws Exception {
-                    response.setContentType("text/plain");
-                    response.getWriter().write("This is a web socket server");
-                }
-            }, "/favicon.ico");
-
-//            ServerContainer serverContainer = new
-
-            httpServer.start();
-//            System.out.println("Enabled System.in.read()");
-//            System.in.read();
-
-            // Add a shutdown hook to gracefully stop the server
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                System.out.println("Shutting down server...");
-                httpServer.shutdownNow();
-            }));
-
-            // Block the main thread indefinitely
-            try {
-                Thread.currentThread().join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Restore the interrupt status
-                System.err.println("Main thread interrupted, exiting...");
+            int port;
+            if(System.getenv("PORT") != null){
+                port = Integer.parseInt(System.getenv("PORT"));
             }
+            else {
+                port=8008;
+            }
+            Server server = new Server(port);
 
-//            Server server = new Server("localhost", port, "/", null, ChatServer.class);
-//            server.start();
-//            System.out.println("WebSocket server started...");
-//            System.in.read(); // Keep server running, press Enter to stop
+            ServletContextHandler servletContextHandler = new ServletContextHandler("");
+            server.setHandler(servletContextHandler);
+
+            JakartaWebSocketServletContainerInitializer.configure(servletContextHandler, (servletContext, container) ->
+            {
+                container.setDefaultMaxTextMessageBufferSize(128 * 1024);
+                container.addEndpoint(ChatServer.class);
+            });
+            servletContextHandler.addServlet(HttpFiller.class, "/");
+
+            server.start();
+            System.out.println("Service started on port: " + port);
         } catch (Exception e) {
             e.printStackTrace();
         }
