@@ -11,14 +11,14 @@ public class WebSocketServerApp {
 
 
         try {
+            int port = Integer.parseInt(System.getenv("PORT")); // Fetch Heroku-assigned port
 
-            HttpServer httpServer = HttpServer.createSimpleServer(null, 3000);
+            HttpServer httpServer = HttpServer.createSimpleServer(null, port);
             HttpHandler staticHandler = new StaticHttpHandler("./react-build");
             httpServer.getServerConfiguration().addHttpHandler(staticHandler, "/");
             httpServer.start();
 
 
-            int port = Integer.parseInt(System.getenv("PORT")); // Fetch Heroku-assigned port
             Server server = new Server("0.0.0.0", port, "/", null, ChatServer.class);
             server.start();
             System.out.println("WebSocket server started...");
