@@ -9,6 +9,11 @@ public class Message {
         this.from = from;
         this.content = content;
     }
+    public Message(String from, String content, String id) {
+        this.from = from;
+        this.content = content;
+        this.id = id;
+    }
 
     public String getFrom() {
         return from;

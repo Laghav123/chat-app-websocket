@@ -30,7 +30,7 @@ public class ChatServer {
 
         String username = session.getRequestParameterMap().get("userName").get(0);
         users.put(session.getId(), username);
-        broadcastMessage(new Message("Server", username+" has joined the chat."));
+        broadcastMessage(new Message("Server", username+" has joined the chat.", String.valueOf(System.currentTimeMillis())));
     }
 
     @OnMessage
@@ -45,7 +45,7 @@ public class ChatServer {
     public void onClose(Session session) throws IOException {
         clients.remove(session);
         System.out.println("Client disconnected: " + session.getId());
-        broadcastMessage(new Message("Server", users.get(session.getId()) + " has left the chat."));
+        broadcastMessage(new Message("Server", users.get(session.getId()) + " has left the chat.", String.valueOf(System.currentTimeMillis())));
         users.remove(session.getId());
     }
 

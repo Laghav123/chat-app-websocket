@@ -2,6 +2,7 @@ package org.chatapp.server;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 
 
 public class WebSocketServerApp {
@@ -14,7 +15,7 @@ public class WebSocketServerApp {
                 port = Integer.parseInt(System.getenv("PORT"));
             }
             else {
-                port=8008;
+                port=8080;
             }
             Server server = new Server(port);
 
@@ -24,6 +25,7 @@ public class WebSocketServerApp {
             JakartaWebSocketServletContainerInitializer.configure(servletContextHandler, (servletContext, container) ->
             {
                 container.setDefaultMaxTextMessageBufferSize(128 * 1024);
+                container.setDefaultMaxSessionIdleTimeout(600000); // 10 minutes
                 container.addEndpoint(ChatServer.class);
             });
             servletContextHandler.addServlet(HttpFiller.class, "/");
